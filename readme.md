@@ -3,7 +3,7 @@
 Ini adalah project yang dibuat untuk mengikuti [Kaggle Data Science Competition - House Prices - Advanced Regression Techniques](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques), dan sebagai pembelajaran.
 
 ## Keterangan dalam data
-Terdapat 81 kolom dalam data [test.csv](\\test.csv), berikut ke 81 kolom tersebut:
+Terdapat 81 kolom dalam data [test.csv](/test.csv), berikut ke 81 kolom tersebut:
 
 | Column | Sum of Row |
 | :---: | :---: |
