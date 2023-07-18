@@ -89,4 +89,38 @@ Terdapat 81 kolom dalam data [test.csv](https://github.com/mwahid60/house_price_
 |SaleCondition | 1460 | object  |
 |SalePrice     | 1460 | int64   |
 
-Disini saya menggunakan Pandas 2.0, pada data ini nilai kategori `NA` dianggap sebagai missing value oleh pandas 2.0 sehingga harus dinyatakan ulang sebagai value `NA`.
+Disini saya menggunakan Pandas 2.0, pada data ini nilai kategorik **NA** dianggap sebagai missing value oleh pandas 2.0 sehingga harus dinyatakan ulang sebagai value **NA**.
+
+Setelah menyatakan ulang value **NA**, lalu kita hitung ada berapa banyak missing value pada masing-masing kolom pada data. Disini kita prioritaskan kolom yang memiliki missing value paling banyak untuk di isi.
+
+Ada beberapa metode yang dapat digunakan, untuk data kategorik disini aku menggunakan
+
+``` Python
+df_train["Alley"] = df_train["Alley"].fillna("NA")
+```
+
+Pada data ketegorik sebenarnya tidak ada missing, hanya saja pandas 2.0 yang menganggap string **NA** sebagai missing value sehingga hanya perlu dinyatakan ulang sebagai nilai string **NA**.
+
+Sedangkan untuk data kontinyu yang berbentuk *integer* atau *float* disini aku mengisi missing value berdasarkan proporsi distribusi datanya, sebagai berikut:
+
+``` Python
+# Fill GarageYrBlt with distribution ratio
+
+# Menghitung distribusi GarageYrBlt
+proporsi = df_train["LotFrontage"].dropna().value_counts(normalize=True)
+
+# target missing value
+target = df_train["LotFrontage"].isna()
+
+# menghitung jumlah missing value
+miss_jumlah = target.sum()
+
+# mengambil sample non-missing value dari LotFrontage
+replace_value = np.random.choice(proporsi.index,    # index dari proporsi
+                                 size=miss_jumlah,  # jumlah missing value
+                                 p=proporsi.values  # nilai proporsi distribusi
+                                 )
+
+df_train.loc[target, "LotFrontage"] = replace_value
+```
+
