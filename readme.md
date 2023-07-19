@@ -1,8 +1,8 @@
-# House Price Prediction
+# **House Price Prediction**
 
 Ini adalah project yang dibuat untuk mengikuti [Kaggle Data Science Competition](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques), dan sebagai pembelajaran.
 
-## Keterangan Data
+## **Keterangan Data**
 Terdapat 81 kolom dalam data [test.csv](https://github.com/mwahid60/house_price_prediction/blob/main/train.csv), berikut ke 81 kolom tersebut:
 
 | Column | Non-Null Count | Data Type |
@@ -123,4 +123,44 @@ replace_value = np.random.choice(proporsi.index,    # index dari proporsi
 
 df_train.loc[target, "LotFrontage"] = replace_value
 ```
+
+## **Data Encoding**
+Mengubah setiap kolom kategorikal menjadi angka, sehingga dapat diproses menggunakan algoritma machine learning dan mendapatkan hasil prediksi yang baik.
+
+Pada kolom **MSSubClass** nilainya sudah berbentuk angka (20, 30, 40, ...). Sehingga disini aku menggunakan `.loc[]` untuk mengubah ulang nilai pada kolom tersebut.
+
+``` Python
+df_train.loc[df_train["MSSubClass"]==20, "MSSubClass"] =1
+df_train.loc[df_train["MSSubClass"]==30, "MSSubClass"] =2
+df_train.loc[df_train["MSSubClass"]==40, "MSSubClass"] =3
+# ...
+```
+
+Sedangkan untuk kolom kategorikal yang berbentuk string aku menggunakan `.map()` untuk mengganti nilai string tersebut menjadi angka.
+
+``` Python
+# Mapping MSZoning 1-8 
+map_MSZoning = {
+    'A': 1,
+    'C (all)': 2,
+    'FV': 3,
+    'I': 4,
+    'RH': 5,
+    'RM': 6,
+    'RL': 7,
+    'RP': 8
+}
+
+# Train Data
+# Mengganti Nilai MSZoning
+df_train["MSZoning"] = df_train["MSZoning"].map(map_MSZoning)
+
+# Test Data
+# Mengganti Nilai MSZoning
+df_test["MSZoning"] = df_test["MSZoning"].map(map_MSZoning)
+```
+
+## **Analisis Data**
+
+**Cek Outliers**
 
