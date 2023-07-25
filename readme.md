@@ -93,7 +93,7 @@ Disini saya menggunakan Pandas 2.0, pada data ini nilai kategorik **NA** diangga
 
 Setelah menyatakan ulang value **NA**, lalu kita hitung ada berapa banyak missing value pada masing-masing kolom pada data. Disini kita prioritaskan kolom yang memiliki missing value paling banyak untuk di isi.
 
-Ada beberapa metode yang dapat digunakan, untuk data kategorik disini aku menggunakan
+Ada beberapa metode yang dapat digunakan, untuk data kategorik disini saya menggunakan
 
 ``` Python
 df_train["Alley"] = df_train["Alley"].fillna("NA")
@@ -101,7 +101,7 @@ df_train["Alley"] = df_train["Alley"].fillna("NA")
 
 Pada data ketegorik sebenarnya tidak ada missing, hanya saja pandas 2.0 yang menganggap string **NA** sebagai missing value sehingga hanya perlu dinyatakan ulang sebagai nilai string **NA**.
 
-Sedangkan untuk data kontinyu yang berbentuk *integer* atau *float* disini aku mengisi missing value berdasarkan proporsi distribusi datanya, sebagai berikut:
+Sedangkan untuk data kontinyu yang berbentuk *integer* atau *float* disini saya mengisi missing value berdasarkan proporsi distribusi datanya, sebagai berikut:
 
 ``` Python
 # Fill GarageYrBlt with distribution ratio
@@ -127,7 +127,7 @@ df_train.loc[target, "LotFrontage"] = replace_value
 ## **Data Encoding**
 Mengubah setiap kolom kategorikal menjadi angka, sehingga dapat diproses menggunakan algoritma machine learning dan mendapatkan hasil prediksi yang baik.
 
-Pada kolom **MSSubClass** nilainya sudah berbentuk angka (20, 30, 40, ...). Sehingga disini aku menggunakan `.loc[]` untuk mengubah ulang nilai pada kolom tersebut.
+Pada kolom **MSSubClass** nilainya sudah berbentuk angka (20, 30, 40, ...). Sehingga disini saya menggunakan `.loc[]` untuk mengubah ulang nilai pada kolom tersebut.
 
 ``` Python
 df_train.loc[df_train["MSSubClass"]==20, "MSSubClass"] =1
@@ -136,7 +136,7 @@ df_train.loc[df_train["MSSubClass"]==40, "MSSubClass"] =3
 # ...
 ```
 
-Sedangkan untuk kolom kategorikal yang berbentuk string aku menggunakan `.map()` untuk mengganti nilai string tersebut menjadi angka.
+Sedangkan untuk kolom kategorikal yang berbentuk string saya menggunakan `.map()` untuk mengganti nilai string tersebut menjadi angka.
 
 ``` Python
 # Mapping MSZoning 1-8 
@@ -160,7 +160,14 @@ df_train["MSZoning"] = df_train["MSZoning"].map(map_MSZoning)
 df_test["MSZoning"] = df_test["MSZoning"].map(map_MSZoning)
 ```
 
-## **Analisis Data**
+## **Seleksi Fitur**
 
-**Cek Outliers**
+Disini saya menggunakan hasil dari multivariat analisis untuk menseleksi fitur yang akan dimasukkan kedalam machine learning, sebelumnya saya juga menggunakan PCA namun ternyata hasilnya menunjukkan error yang lebih tinggi dari pada menggunakan seleksi multivariat analisis.
 
+Fitur yang akan dibuang adalah fitur yang memiliki multivariat analisis kurang dari 1 dan lebih besar dari -1, atau bisa juga dibilang nilai yang mendekati 0.
+
+## **Data Scaling**
+
+Disini Saya Menggunakan Min-Max Scaler untuk menstandarisasi data. sebelumnya saya juga sudah mengetes menggunakan standard scaler namun hasilnya menunjukkan nilai error yang lebih tinggi dari pada Min-Max scaler.
+
+Dari yang saya ketahui alasan kenapa Min-Max scaler lebih baik dalam meningkatkan akurasi adalah karena adanya cukup banyak outlier dalam beberapa kolom fitur. Kenapa tidak saya buang outlier tersebut? alasannya karena outlier tersebut masih memiliki informasi yang baik dan masuk akal, contohnya seperti kolom Lotfrontage. Pada kolom ini menunjukkan data seberapa luas halaman depan yang dimiliki pada rumah tersebut, yang mana data tersebut merupakan data kontinyu, dan tidak memiliki batasan tertentu. 
