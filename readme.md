@@ -89,6 +89,7 @@ Terdapat 81 kolom dalam data [test.csv](https://github.com/mwahid60/house_price_
 |SaleCondition | 1460 | object  |
 |SalePrice     | 1460 | int64   |
 
+## **Handling Missing Value**
 Disini saya menggunakan Pandas 2.0, pada data ini nilai kategorik **NA** dianggap sebagai missing value oleh pandas 2.0 sehingga harus dinyatakan ulang sebagai value **NA**.
 
 Setelah menyatakan ulang value **NA**, lalu kita hitung ada berapa banyak missing value pada masing-masing kolom pada data. Disini kita prioritaskan kolom yang memiliki missing value paling banyak untuk di isi.
@@ -161,13 +162,108 @@ df_test["MSZoning"] = df_test["MSZoning"].map(map_MSZoning)
 ```
 
 ## **Seleksi Fitur**
-
 Disini saya menggunakan hasil dari multivariat analisis untuk menseleksi fitur yang akan dimasukkan kedalam machine learning, sebelumnya saya juga menggunakan PCA namun ternyata hasilnya menunjukkan error yang lebih tinggi dari pada menggunakan seleksi multivariat analisis.
 
-Fitur yang akan dibuang adalah fitur yang memiliki multivariat analisis kurang dari 1 dan lebih besar dari -1, atau bisa juga dibilang nilai yang mendekati 0.
+Fitur yang akan dibuang adalah fitur yang memiliki multivariat analisis kurang dari **0.1** dan lebih besar dari **-0.1**, atau bisa juga dibilang nilai yang mendekati 0.
 
 ## **Data Scaling**
-
 Disini Saya Menggunakan Min-Max Scaler untuk menstandarisasi data. sebelumnya saya juga sudah mengetes menggunakan standard scaler namun hasilnya menunjukkan nilai error yang lebih tinggi dari pada Min-Max scaler.
 
 Dari yang saya ketahui alasan kenapa Min-Max scaler lebih baik dalam meningkatkan akurasi adalah karena adanya cukup banyak outlier dalam beberapa kolom fitur. Kenapa tidak saya buang outlier tersebut? alasannya karena outlier tersebut masih memiliki informasi yang baik dan masuk akal, contohnya seperti kolom Lotfrontage. Pada kolom ini menunjukkan data seberapa luas halaman depan yang dimiliki pada rumah tersebut, yang mana data tersebut merupakan data kontinyu, dan tidak memiliki batasan tertentu. 
+
+## **Machine Learning Model**
+Ada 4 jenis Model Machine Learning yang diuji pada project ini yakni Linear Regresi, Random Forest, XG-Boost, dan Neural Network.
+
+Pada Model Random Forest, XG-Boost, dan Neural Network saya melakukan hyper parameter tunning menggunakan **Grid Search CV**.
+
+### Linear Regresi
+Pada model linear regresi hasil evaluasinya pada train dan test data didapatkan hasil sebagai berikut:
+
+```Markdown
+# Train data
+RMSE     = 32879.89110812927
+R2 Score = 0.8278743427616817
+MAPE     = 12.024%
+
+# Test data
+RMSE     = 30675.627002957714
+R2 Score = 0.8499910306215344
+MAPE     = 12.884%
+```
+
+### Random Forest
+Sedangkan pada model random forest disini saya melakukan hyperparameter tuning menggunakan grid search cv dengan parameter sebagai berikut:
+
+```
+'n_estimators': (5, 10, 20, 30, 50, 80, 100),
+'min_samples_leaf': (2, 3, 4, 5, 8, 10)
+```
+
+Dan hasil evaluasi pada train data dan test data sebagai berikut:
+
+```Markdown
+# Train data
+RMSE     = 13976.030589154443
+R2 Score = 0.9689005609610508
+MAPE     = 4.533%
+
+# Test data
+RMSE     = 25189.772953107702
+R2 Score = 0.8988469839365214
+MAPE     = 9.915%
+```
+
+Dari hasil evaluasi pada train dan test diketahui bahwa terjadi overfit pada model random forest yang cukup tinggi.
+
+### XG-Boost
+Pada model XG-Boost ini parameter yang diuji pada grid search CV adalah sebagai berikut:
+
+```
+'gamma': [0, 1, 2, 5, 10, 20, 50], 
+'learning_rate': [0.01, 0.1, 0.2, 0.5, 1],
+'subsample': [0.3, 0.5, 0.7, 1]
+```
+
+Sedangkan untuk hasil evaluasi pada train dan test adalah sebagai berikut:
+
+```Markdown
+# Train data
+RMSE     = 8610.059015652254
+R2 Score = 0.9881968717282759
+MAPE     = 4.146%
+
+# Test data
+RMSE     = 24721.342688430588
+R2 Score = 0.9025740968899777
+MAPE     = 9.298%
+```
+
+Dari hasil evaluasi tersebut diketahui bahwa model XG-boost tersebut terjadi overfiting yang cukup tinggi namun akurasinya sedikit lebih baik dari random forest.
+
+### Neural Network
+Pada model Neural network ini sebelum melakukan hyperparameter tuning menggunakan grid search CV, yang mana modul tersebut berada di dalam package Scikit-Learn, maka harus di wrapping terlebih dahulu menggunakan fungsi `KerasRegressor(model=model)`, sehingga dapat melakukan hyperparameter tuning menggunakan grid search CV. Berikut adalah parameter yang akan diuji:
+
+```
+'epochs': [10, 15, 20, 25],
+'dropout_rate': [0.0, 0.2, 0.5],
+'units': [32, 64],
+'batch_size': [32]
+```
+
+Dan hasil evaluasi pada train dan test data didapatkan hasil sebagai berikut:
+
+```Markdown
+# Train data
+RMSE     = 65352.219411742095
+R2 Score = 0.3200052609268993
+MAPE     = 23.258%
+
+# Test data
+RMSE     = 55450.35942432784
+R2 Score = 0.5098386520380692
+MAPE     = 22.395%
+```
+
+tidak terjadi overfit seperti 2 model sebelumnya, namun akurasi model neural network ini menjadi yang paling buruk dari semua model yang dibuat.
+
+Terimakasih sudah meembaca hingga akhir.
